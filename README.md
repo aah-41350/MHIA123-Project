@@ -1,4 +1,4 @@
-# hia123-project
+# MHIA123-Project
 Personal repository for the MIMIC-IV data set used for the project, as well as Python codes for data preprocessing, feature selection, algorithm testing.
 
 # Checklist
@@ -10,4 +10,3 @@ Personal repository for the MIMIC-IV data set used for the project, as well as P
 
 # References for project
 Included in Refworks
-# 
