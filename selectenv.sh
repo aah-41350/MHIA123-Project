@@ -1,4 +1,4 @@
-source /Users/ahmad/mimicproject/bin/activate
+source ./mimicproject/bin/activate
 
 ssh ***@localhost
 cd /.../phpmyadmin/uploads/
