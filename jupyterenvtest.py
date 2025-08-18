@@ -4,5 +4,5 @@ print(text)
 
 # %%
 print('Hello World!')
-input(str('This is a test'))
-# %%
+name = input(str('Your name?'))
+print(f'Oh, hello there, {name}!')
