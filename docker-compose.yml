@@ -1,0 +1,29 @@
+version: "2.20"
+services:
+  postgresdb:
+    image: postgres:latest
+    container_name: postgresdb
+    exec:
+      execution_command: postgres
+      entrypoint: docker.entrypoint.sh
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: PSQLpwd4!
+      ALLOW_IP_RANGE: 0.0.0.0/0
+    ports:
+      - 15432:5432
+    volumes:
+      - volume1/docker/postgresql/18/data:/var/lib/postgresql/data:rw
+
+  pgdbadmin:
+    image: dpage/pgAdmin4:latest
+    container_name: pgAdmin4db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: azfarn@me.com
+      PGADMIN_DEFAULT_PASSWORD: PSQLpwd4
+    ports:
+      - 51080:80
+      - 51443:443
+    volumes:
+      - volume1/docker/pgadmin4/9.9/data:/var/lib/pgadmin:rw
