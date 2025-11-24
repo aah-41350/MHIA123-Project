@@ -1,8 +1,8 @@
 # LAN SERVER LOGIN
-ssh azfar@192.168.0.77 -p 824
+ssh azfar@192.168.0.77
 
 # LOGIN TO REMOTE SERVER
-ssh azfar@ds223j.kudu-altair.ts.net -p 824
+ssh azfar@ds223j.kudu-altair.ts.net
 azfar@DS223j:~$ cd /volume1/docker/postgres/18/data
 
 # CLONE REPO
@@ -20,9 +20,9 @@ root@postgresdb:/var/lib/postgresql/18/docker/3.1#
 # DATABASE SETUP FOR POSTGRESQL
 createdb mimiciv
 psql -U postgres -d mimiciv -f mimic-iv/buildmimic/postgres/create.sql
-psql -U postgres -d mimiciv -v ON_ERROR_STOP=1 -v mimic_data_dir=./ -f load_gz.sql
-psql -U postgres -d mimiciv -v ON_ERROR_STOP=1 -v mimic_data_dir=./ -f constraint.sql
-psql -U postgres -d mimiciv -v ON_ERROR_STOP=1 -v mimic_data_dir=./ -f index.sql
+psql -U postgres -d mimiciv -v ON_ERROR_STOP=1 -v mimic_data_dir=./ -f load_gz.sql &
+psql -U postgres -d mimiciv -v ON_ERROR_STOP=1 -v mimic_data_dir=./ -f constraint.sql &
+psql -U postgres -d mimiciv -v ON_ERROR_STOP=1 -v mimic_data_dir=./ -f index.sql &
 
 # REMOTE LOAD
 psql -h ds223j.kudu-altair.ts.net -U postgres -p 15432 mimiciv
