@@ -1,15 +1,26 @@
 {
-  "name": "MIMIC-IV Dev Container",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "mimicdb", // Or the name of your primary service
-  "workspaceFolder": "/workspace",
-  "customizations":{
-	"vscode": {
-		"extensions": [
-			"ms-python.python", // Example extensions, add what you need
-			"ms-azuretools.vscode-docker",
-			"ms-vscode-remote.remote-containers"
-  ]}},
-  "forwardPorts": [5432], // Forward the PostgreSQL port
-  "postCreateCommand": "sudo service postgresql start" // Start PostgreSQL after creation
+  "name": "Codespace + Tailscale + Remote PostgreSQL",
+  "build": { "dockerfile": "Dockerfile" },
+  "remoteUser": "vscode",
+  "postCreateCommand": "sudo tailscaled --tun=userspace-networking --socks5-server=localhost:1055 --state=/var/lib/tailscale/tailscaled.state & sleep 3 && sudo tailscale up --authkey=${TS_AUTHKEY} --hostname=codespace-dev --netfilter-mode=off --accept-routes",
+  "runArgs": [],
+  "containerEnv": {
+    "TS_AUTHKEY": "${localEnv:TS_AUTHKEY}"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {},
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/node:1": { "version": "lts" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-azuretools.vscode-docker",
+        "matthewpi.sqltools-driver-pg",
+        "mtxr.sqltools",
+        "tamasfe.even-better-toml"
+      ]
+    }
+  }
 }
