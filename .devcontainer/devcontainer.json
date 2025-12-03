@@ -2,11 +2,9 @@
   "name": "Codespace + Tailscale + Remote PostgreSQL",
   "build": { "dockerfile": "Dockerfile" },
   "remoteUser": "vscode",
-  "postCreateCommand": "sudo tailscaled --tun=userspace-networking --socks5-server=localhost:1055 --state=/var/lib/tailscale/tailscaled.state & sleep 3 && sudo tailscale up --authkey=${TS_AUTHKEY} --netfilter-mode=off --accept-routes",
+  "postCreateCommand": "sudo tailscaled --tun=userspace-networking --socks5-server=localhost:1055 --state=/var/lib/tailscale/tailscaled.state & sleep 3 && sudo tailscale up --authkey=${TS_AUTHKEY} --hostname=codespace-dev --netfilter-mode=off --accept-routes",
   "containerEnv": {
-    "TS_AUTHKEY": "${localEnv:TS_AUTHKEY}",
-    "TS_AUTH_ONCE": "true",
-    "TS_HOSTNAME": "codespace-dev",
+    "TS_AUTHKEY": "${localEnv:TS_AUTHKEY}"
   },
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {},
