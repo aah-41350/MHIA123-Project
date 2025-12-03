@@ -20,7 +20,6 @@
 
   "features": {},
   "hostRequirements": {
-    "cpus": 2,
-    "ram": "4gb"
+    "cpus": 2
   }
 }
