@@ -1,6 +1,9 @@
 # LAN SERVER LOGIN
 ssh azfar@192.168.0.77
 
+# SSH TUNNEL SETUP FOR REMOTE DB ACCESS
+ssh -R 15432:localhost:5432 -N azfar@ds223j.kudu-altair.ts.net
+
 # LOGIN TO REMOTE SERVER
 ssh azfar@ds223j.kudu-altair.ts.net
 azfar@DS223j:~$ cd /volume1/docker/postgres/18/data
@@ -26,6 +29,9 @@ psql -U postgres -d mimiciv -v ON_ERROR_STOP=1 -v mimic_data_dir=./ -f index.sql
 
 # REMOTE LOAD
 psql -h ds223j.kudu-altair.ts.net -U postgres -p 15432 mimiciv
+
+# pgAdmin DATA FILES
+/volume1/docker/pgadmin4/9.9/data/storage/azfarn_me.com 
 
 # DATABASE SETUP FOR MYSQL
 mysql -u root -p

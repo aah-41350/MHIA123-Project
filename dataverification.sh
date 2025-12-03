@@ -48,7 +48,6 @@ MariaDB [mimic-iv]> source validate.sql;
 28 rows in set (25 min 11.650 sec)
 
 # Postgresql Verification Output
-
 psql -U postgres -d mimiciv -f validate.sql
         tbl         | expected_count | observed_count | row_count_check 
 --------------------+----------------+----------------+-----------------

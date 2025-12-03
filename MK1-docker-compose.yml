@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  #######################################
+  #  TAILSCALE (minimal privileges)
+  #######################################
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: ts-dxp4800
+    network_mode: host        # required for proper tunnel routing
+
+    cap_add:
+      - NET_ADMIN             # minimum for TUN interface
+      - NET_RAW               # required by WireGuard
+
+    volumes:
+      - /dev/net/tun:/dev/net/tun
+      - /volume2/docker/tailscale/state:/var/lib/tailscale
+
+    environment:
+      - TS_AUTHKEY=YOUR_TAILSCALE_AUTH_KEY
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_HOSTNAME=ugreen-nas
+      # Optional:
+      # - TS_ROUTES=192.168.1.0/24
+      # - TS_EXTRA_ARGS=--advertise-exit-node
+
+    restart: unless-stopped
+
+
+  #######################################
+  #  POSTGRESQL 18+ (bridge mode)
+  #######################################
+  postgres:
+    image: postgres:18
+    container_name: postgres
+    restart: unless-stopped
+    networks:
+      - backend
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: PSQLpwd4!
+      POSTGRES_DB: mimiciv
+
+    # IMPORTANT: mount ONLY /var/lib/postgresql
+    # Postgres 18+ will create /var/lib/postgresql/18/main automatically
+    volumes:
+      - /volume2/docker/postgres:/var/lib/postgresql
+
+    # No LAN exposure — Tailscale only
+    ports: []
+
+    # Basic tuning + allow listening on Tailscale interface
+    command: >
+      postgres -c listen_addresses='*'
+               -c max_connections=200
+               -c shared_buffers=256MB
+
+
+networks:
+  backend:
+    driver: bridge

@@ -1,0 +1,15 @@
+{
+  "name": "MIMIC-IV Dev Container",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "mimicdb", // Or the name of your primary service
+  "workspaceFolder": "/workspace",
+  "customizations":{
+	"vscode": {
+		"extensions": [
+			"ms-python.python", // Example extensions, add what you need
+			"ms-azuretools.vscode-docker",
+			"ms-vscode-remote.remote-containers"
+  ]}},
+  "forwardPorts": [5432], // Forward the PostgreSQL port
+  "postCreateCommand": "sudo service postgresql start" // Start PostgreSQL after creation
+}

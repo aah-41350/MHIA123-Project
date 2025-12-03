@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: ts-dxp4800
+    restart: unless-stopped
+    environment:
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_EXTRA_ARGS=--advertise-exit-node --ssh
+      - TS_AUTHKEY=tskey-auth-kLdPbd7f7E11CNTRL-zDMwmKzpEtLJAgPM89jStLrkwrwP9C23
+      - TS_HOSTNAME=dxp4800
+    volumes:
+      - /volume2/docker/tailscale:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    network_mode: bridge
+
+  postgres:
+    image: postgres:18
+    container_name: pg-mimicdb
+    restart: unless-stopped
+    depends_on:
+      - tailscale
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: PSQLpwd4!
+      POSTGRES_DB: mimiciv
+      PGDATA: /var/lib/postgresql/18/main
+    volumes:
+      # REQUIRED for PostgreSQL 18+ (single mount at /var/lib/postgresql)
+      - /volume2/docker/postgres:/var/lib/postgresql
+    networks:
+      - backend
+    # No privileged mode, minimal capabilities
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
+    # Do NOT expose ports to LAN (Tailscale-only access)
+    ports: []
+
+networks:
+  backend:
+    driver: bridge

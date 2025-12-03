@@ -1,8 +1,11 @@
 import psycopg2               
 
-conn = psycopg2.connect(
-    host = "remote_host",  
-    database = "db_name",  
-    user="username",     
-    password="password"
-)
+connection = psycopg2.connect(
+    host="azfar.myds.me",
+    database="mimiciv",
+    user="postgres",
+    password="PSQLpwd4!",
+    port="15432"
+    )
+
+print("Connection to PostgreSQL successful!")
