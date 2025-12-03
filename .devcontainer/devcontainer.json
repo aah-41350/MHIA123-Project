@@ -1,19 +1,26 @@
 {
-  "name": "Codespace with Tailscale + Proxychains + PostgreSQL",
-
+  "name": "Codespaces + Tailscale + Postgres Client",
   "dockerComposeFile": "docker-compose.yml",
-  "service": "app",
-  "workspaceFolder": "/workspace",
-
-  "features": {
-    "ghcr.io/devcontainers/features/common-utils:2": {}
+  "service": "devcontainer",
+  "workspaceFolder": "/workspaces",
+  "remoteUser": "vscode",
+  "containerEnv": {
+    "TS_AUTHKEY": "${{ secrets.TS_AUTHKEY }}"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "ms-python.python",
+        "ms-vscode.vscode-typescript-next",
+        "ms-ossdata.vscode-postgresql"
+      ]
+    }
   },
 
-  "postCreateCommand": "sudo chmod +x /usr/local/bin/run-tailscale && run-tailscale &",
-
-  "mounts": [
-    "source=tailscale-state,target=/var/lib/tailscale,type=volume"
-  ],
-
-  "remoteUser": "vscode"
+  "features": {},
+  "hostRequirements": {
+    "cpus": 2,
+    "ram": "4gb"
+  }
 }

@@ -1,16 +1,22 @@
+version: "3.8"
+
 services:
-  app:
+  devcontainer:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: codespace-app
-    privileged: true         # Needed for Tailscale userspace router mode
-    volumes:
-      - ..:/workspace
-      - tailscale-state:/var/lib/tailscale
+    privileged: true       # required for tailscaled networking
+    security_opt:
+      - seccomp:unconfined
     environment:
-      - TS_AUTHKEY=${TS_AUTHKEY}
-    command: sleep infinity
+      TS_AUTHKEY: ${TS_AUTHKEY}
+    volumes:
+      - ..:/workspaces:cached
+      - tailscale-state:/var/lib/tailscale
+      - tailscale-run:/var/run/tailscale
+    command: /bin/bash -c "/usr/local/bin/dev-start.sh"
+    network_mode: bridge
 
 volumes:
   tailscale-state:
+  tailscale-run:
