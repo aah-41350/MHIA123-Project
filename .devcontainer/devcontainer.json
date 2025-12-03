@@ -1,6 +1,8 @@
 {
-  "name": "Codespace + Tailscale + Remote PostgreSQL",
-  "build": { "dockerfile": "Dockerfile" },
+  "name": "Codespace + Tailscale + PostgreSQL Proxy",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "remoteUser": "vscode",
   "postCreateCommand": "sudo tailscaled --tun=userspace-networking --socks5-server=localhost:1055 --state=/var/lib/tailscale/tailscaled.state & sleep 3 && sudo tailscale up --authkey=${TS_AUTHKEY} --hostname=codespace-dev --netfilter-mode=off --accept-routes",
   "containerEnv": {
@@ -8,17 +10,14 @@
   },
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {},
-    "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/node:1": { "version": "lts" }
+    "ghcr.io/devcontainers/features/git:1": {}
   },
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-python.python",
         "ms-azuretools.vscode-docker",
-        "matthewpi.sqltools-driver-pg",
         "mtxr.sqltools",
-        "tamasfe.even-better-toml"
+        "matthewpi.sqltools-driver-pg"
       ]
     }
   }
