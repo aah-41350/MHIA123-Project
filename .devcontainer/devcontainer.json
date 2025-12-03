@@ -3,7 +3,6 @@
   "build": { "dockerfile": "Dockerfile" },
   "remoteUser": "vscode",
   "postCreateCommand": "sudo tailscaled --tun=userspace-networking --socks5-server=localhost:1055 --state=/var/lib/tailscale/tailscaled.state & sleep 3 && sudo tailscale up --authkey=${TS_AUTHKEY} --hostname=codespace-dev --netfilter-mode=off --accept-routes",
-  "runArgs": [],
   "containerEnv": {
     "TS_AUTHKEY": "${localEnv:TS_AUTHKEY}"
   },
