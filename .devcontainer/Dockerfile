@@ -1,24 +1,24 @@
 FROM mcr.microsoft.com/devcontainers/base:debian
 
-# Install tools
+# Install dependencies
 RUN apt-get update && apt-get install -y \
-    curl iproute2 iptables \
-    proxychains4 \
+    curl iproute2 iptables proxychains4 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Tailscale (userspace mode)
-RUN curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.gpg \
-    | tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null && \
-    curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.list \
-    | tee /etc/apt/sources.list.d/tailscale.list >/dev/null && \
-    apt-get update && apt-get install -y tailscale && \
+# Install Tailscale (Debian Trixie correct repo)
+RUN curl -fsSL https://pkgs.tailscale.com/stable/debian/trixie.noarmor.list \
+      -o /etc/apt/sources.list.d/tailscale.list && \
+    curl -fsSL https://pkgs.tailscale.com/stable/debian/trixie.asc \
+      -o /usr/share/keyrings/tailscale-archive-keyring.asc && \
+    apt-get update && \
+    apt-get install -y tailscale && \
     rm -rf /var/lib/apt/lists/*
 
-# Tailscale launcher script
+# Install Tailscale startup script
 COPY tailscale/run-tailscale.sh /usr/local/bin/run-tailscale
 RUN chmod +x /usr/local/bin/run-tailscale
 
-# Proxychains config
+# Install proxychains config
 COPY proxychains.conf /etc/proxychains.conf
 
 WORKDIR /workspace

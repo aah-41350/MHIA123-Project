@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: codespace-app
-    privileged: true   # Required for userspace networking + tuntap
+    privileged: true         # Needed for Tailscale userspace router mode
     volumes:
       - ..:/workspace
       - tailscale-state:/var/lib/tailscale

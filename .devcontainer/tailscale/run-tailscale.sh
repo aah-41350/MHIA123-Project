@@ -2,13 +2,19 @@
 
 echo "[Tailscale] Starting userspace daemon..."
 
-# Start daemon in userspace mode
-tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/var/run/tailscale/tailscaled.sock &
+tailscaled \
+  --state=/var/lib/tailscale/tailscaled.state \
+  --socket=/var/run/tailscale/tailscaled.sock \
+  --port 41641 &
 
 sleep 2
 
 echo "[Tailscale] Bringing interface up..."
-tailscale up --auth-key=${TS_AUTHKEY} --ssh --accept-dns=false --netfilter-mode=off
+tailscale up \
+  --auth-key=${TS_AUTHKEY} \
+  --ssh \
+  --accept-dns=false \
+  --netfilter-mode=off
 
 echo "[Tailscale] Status:"
 tailscale status
