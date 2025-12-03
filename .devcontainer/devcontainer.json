@@ -1,25 +1,23 @@
 {
-  "name": "Codespaces + Tailscale + Postgres Client",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "devcontainer",
-  "workspaceFolder": "/workspaces",
-  "remoteUser": "vscode",
-  "containerEnv": {
-    "TS_AUTHKEY": "${{ secrets.TS_AUTHKEY }}"
+  "name": "mimic-codespace",
+  "build": {
+    "dockerfile": "Dockerfile"
   },
+  "postCreateCommand": "bash .devcontainer/post_create.sh",
+  
+  // You can add repo-level secrets under "TAILSCALE_AUTHKEY"
+  "remoteEnv": {
+    "TAILSCALE_AUTHKEY": "${local:secrets.TAILSCALE_AUTHKEY}"
+  },
+
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-azuretools.vscode-docker",
         "ms-python.python",
-        "ms-vscode.vscode-typescript-next",
-        "ms-ossdata.vscode-postgresql"
+        "ms-python.vscode-pylance",
+        "ms-toolsai.jupyter",
+        "mhutchie.git-graph"
       ]
     }
-  },
-
-  "features": {},
-  "hostRequirements": {
-    "cpus": 2
   }
 }

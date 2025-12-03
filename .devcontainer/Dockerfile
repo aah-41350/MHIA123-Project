@@ -1,26 +1,30 @@
-FROM mcr.microsoft.com/devcontainers/base:debian
+# Base image
+FROM mcr.microsoft.com/devcontainers/python:3.11
 
-# Core tools
+# Install dependencies (curl, gnupg, tailscale, postgres client)
 RUN apt-get update && apt-get install -y \
-    curl sudo iproute2 iptables ca-certificates \
+    curl \
+    gnupg \
+    lsb-release \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-# --------------------------
-# Install Tailscale (Debian 13 / Trixie)
-# Using Debian SID repo (official method)
-# --------------------------
-RUN curl -fsSL https://pkgs.tailscale.com/stable/debian/unstable.noarmor.list \
-      -o /etc/apt/sources.list.d/tailscale.list && \
-    curl -fsSL https://pkgs.tailscale.com/stable/debian/unstable.asc \
-      -o /usr/share/keyrings/tailscale-archive-keyring.asc && \
-    apt-get update && \
-    apt-get install -y tailscale && \
-    rm -rf /var/lib/apt/lists/*
+# Install Tailscale
+RUN curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.gpg | tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null \
+    && curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.list | tee /etc/apt/sources.list.d/tailscale.list \
+    && apt-get update \
+    && apt-get install -y tailscale
 
-# Allow tailscaled runtime
-RUN mkdir -p /var/run/tailscale /var/lib/tailscale
+# Python ML stack
+RUN pip install --upgrade pip && pip install \
+    psycopg2-binary \
+    sqlalchemy \
+    pandas \
+    polars \
+    pyarrow \
+    duckdb \
+    dask[complete] \
+    scikit-learn \
+    xgboost \
+    lightgbm
 
-# devcontainer entry
-COPY dev-start.sh /usr/local/bin/dev-start.sh
-RUN chmod +x /usr/local/bin/dev-start.sh
