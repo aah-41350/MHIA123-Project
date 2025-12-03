@@ -1,35 +1,24 @@
-FROM mcr.microsoft.com/devcontainers/base:bookworm
+FROM mcr.microsoft.com/devcontainers/base:debian
 
-USER root
-
-# Install required tools, psql, and tsocks for SOCKS5 proxying
+# Install tools
 RUN apt-get update && apt-get install -y \
-    curl \
-    gnupg \
-    iproute2 \
-    iputils-ping \
-    iptables \
-    postgresql-client \
-    tsocks \
-    git-lfs \
+    curl iproute2 iptables \
+    proxychains4 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Tailscale repository (noarmor version works best in containers)
-RUN curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg \
-    -o /usr/share/keyrings/tailscale-archive-keyring.gpg && \
-    curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.tailscale-keyring.list \
-    -o /etc/apt/sources.list.d/tailscale.list && \
-    apt-get update && \
-    apt-get install -y tailscale
+# Install Tailscale (userspace mode)
+RUN curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.gpg \
+    | tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null && \
+    curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.list \
+    | tee /etc/apt/sources.list.d/tailscale.list >/dev/null && \
+    apt-get update && apt-get install -y tailscale && \
+    rm -rf /var/lib/apt/lists/*
 
-# Make directory for Tailscale state file
-RUN mkdir -p /var/lib/tailscale && chmod 700 /var/lib/tailscale
+# Tailscale launcher script
+COPY tailscale/run-tailscale.sh /usr/local/bin/run-tailscale
+RUN chmod +x /usr/local/bin/run-tailscale
 
-# Install tsocks config runtime
-COPY tsocks.conf /etc/tsocks.conf
+# Proxychains config
+COPY proxychains.conf /etc/proxychains.conf
 
-# Make wrapper script executable
-COPY connect-db.sh /usr/local/bin/ts-psql
-RUN chmod +x /usr/local/bin/ts-psql
-
-USER vscode
+WORKDIR /workspace

@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: codespace-app
+    privileged: true   # Required for userspace networking + tuntap
+    volumes:
+      - ..:/workspace
+      - tailscale-state:/var/lib/tailscale
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY}
+    command: sleep infinity
+
+volumes:
+  tailscale-state:
