@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/devcontainers/python:3.13
 
 # Install dependencies (curl, gnupg, tailscale, postgres client)
-RUN apt-get update && apt-get install -y \
+RUN sudo apt-get update && sudo apt-get install -y \
     curl \
     gnupg \
     lsb-release \
