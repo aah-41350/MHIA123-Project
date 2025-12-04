@@ -2,8 +2,8 @@
 
 echo "Starting tailscaled in userspace mode..."
 
-# Start tailscaled (no root privileges required)
-nohup tailscaled \
+# Start tailscaled in the background
+sudo tailscaled \
     --tun=userspace-networking \
     --socks5-server=localhost:1055 \
     >/tmp/tailscaled.log 2>&1 &
@@ -11,11 +11,10 @@ nohup tailscaled \
 sleep 2
 
 echo "Bringing Tailscale up..."
-tailscale up \
-  --authkey="${TAILSCALE_AUTHKEY}" \
+sudo tailscale up \
+  --authkey="${TS_AUTHKEY}" \
   --hostname="mimic-codespace" \
-  --accept-routes \
-  --netfilter=false
+  --accept-routes
 
 echo "Tailscale status:"
 tailscale status || true

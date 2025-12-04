@@ -1,0 +1,34 @@
+flag provided but not defined: -sock5-server
+Usage of tailscaled:
+  -bird-socket string
+    	path of the bird unix socket
+  -cleanup
+    	clean up system state and exit
+  -config string
+    	path to config file, or 'vm:user-data' to use the VM's user-data (EC2)
+  -debug string
+    	listen address ([ip]:port) of optional debug server
+  -encrypt-state
+    	encrypt the state file on disk; when not set encryption will be enabled if supported on this platform; uses TPM on Linux and Windows, on all other platforms this flag is not supported
+  -hardware-attestation
+    	use hardware-backed keys to bind node identity to this device when supported by the OS and hardware. Uses TPM 2.0 on Linux and Windows; SecureEnclave on macOS and iOS; and Keystore on Android
+  -no-logs-no-support
+    	disable log uploads; this also disables any technical support
+  -outbound-http-proxy-listen string
+    	optional [ip]:port to run an outbound HTTP proxy (e.g. "localhost:8080")
+  -port value
+    	UDP port to listen on for WireGuard and peer-to-peer traffic; 0 means automatically select (default 0)
+  -socket string
+    	path of the service unix socket (default "/var/run/tailscale/tailscaled.sock")
+  -socks5-server string
+    	optional [ip]:port to run a SOCK5 server (e.g. "localhost:1080")
+  -state string
+    	absolute path of state file; use 'kube:<secret-name>' to use Kubernetes secrets or 'arn:aws:ssm:...' to store in AWS SSM; use 'mem:' to not store state and register as an ephemeral node. If empty and --statedir is provided, the default is <statedir>/tailscaled.state. Default: /home/vscode/.local/share/tailscale/tailscaled.state
+  -statedir string
+    	path to directory for storage of config state, TLS certs, temporary incoming Taildrop files, etc. If empty, it's derived from --state when possible.
+  -tun string
+    	tunnel interface name; use "userspace-networking" (beta) to not use TUN (default "tailscale0")
+  -verbose int
+    	log verbosity level; 0 is default, 1 or higher are increasingly verbose
+  -version
+    	print version information and exit

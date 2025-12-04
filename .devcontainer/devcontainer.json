@@ -7,7 +7,7 @@
   
   // You can add repo-level secrets under "TAILSCALE_AUTHKEY"
   "remoteEnv": {
-    "TAILSCALE_AUTHKEY": "${local:secrets.TAILSCALE_AUTHKEY}"
+    "TS_AUTHKEY": "${local:secrets.TS_AUTHKEY}"
   },
 
   "customizations": {
@@ -15,8 +15,8 @@
       "extensions": [
         "ms-python.python",
         "ms-python.vscode-pylance",
-        "ms-toolsai.jupyter",
-        "mhutchie.git-graph"
+        "ms-toolsai.jupyter"
+
       ]
     }
   }
