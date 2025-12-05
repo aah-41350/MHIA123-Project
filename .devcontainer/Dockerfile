@@ -27,5 +27,3 @@ RUN pip install --upgrade pip && pip install \
     scikit-learn \
     xgboost \
     lightgbm
-
-ENV export TS_DEBUG_ENABLE_TCP_ONLY=true

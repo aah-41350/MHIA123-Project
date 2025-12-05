@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export TS_DEBUG_ENABLE_TCP_ONLY=true
+
 echo "Starting tailscaled in userspace mode..."
 
 # Start tailscaled in the background
