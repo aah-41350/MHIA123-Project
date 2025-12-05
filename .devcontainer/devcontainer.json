@@ -3,13 +3,13 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
-  "postCreateCommand": "bash .devcontainer/post_create.sh",
-  
-  // You can add repo-level secrets under "TAILSCALE_AUTHKEY"
   "remoteEnv": {
     "TS_AUTHKEY": "${local:secrets.TS_AUTHKEY}"
   },
-
+  "runArgs": ["--device=/dev/net/tun"],
+  "features": {
+    "ghcr.io/tailscale/codespace/tailscale": {}
+  },
   "customizations": {
     "vscode": {
       "extensions": [
@@ -19,5 +19,6 @@
 
       ]
     }
-  }
+  },
+  "postStartCommand": "bash .devcontainer/post_start.sh"
 }

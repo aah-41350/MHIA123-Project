@@ -3,7 +3,7 @@
 echo "Starting tailscaled in userspace mode..."
 
 # Start tailscaled in the background
-sudo tailscaled \
+nohup sudo tailscaled \
     --tun=userspace-networking \
     --socks5-server=localhost:1055 \
     >/tmp/tailscaled.log 2>&1 &
