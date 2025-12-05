@@ -20,10 +20,11 @@ RUN pip install --upgrade pip && pip install \
     psycopg2-binary \
     sqlalchemy \
     pandas \
-    polars \
-    pyarrow \
-    duckdb \
-    dask[complete] \
+    numpy \
     scikit-learn \
     xgboost \
-    lightgbm
+    matplotlib \
+    seaborn \
+    jupyterlab \
+    python-dotenv
+    

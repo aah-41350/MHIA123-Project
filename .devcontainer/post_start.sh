@@ -1,17 +1,5 @@
 #!/bin/bash
 
-export TS_DEBUG_ENABLE_TCP_ONLY=true
-
-echo "Starting tailscaled in userspace mode..."
-
-# Start tailscaled in the background
-nohup sudo tailscaled \
-    --tun=userspace-networking \
-    --socks5-server=localhost:1055 \
-    >/tmp/tailscaled.log 2>&1 &
-
-sleep 2
-
 echo "Bringing Tailscale up..."
 sudo tailscale up \
   --authkey="${TS_AUTHKEY}" \

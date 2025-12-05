@@ -1,7 +1,7 @@
 import psycopg2
 try:
     psycopg2.connect(
-        host="100.101.9.39",
+        host="dxp4800.kudu-altair.ts.net",
         dbname="mimiciv",
         user="postgres",
         password="PSQLpwd4!",
