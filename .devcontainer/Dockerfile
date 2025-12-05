@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/devcontainers/python:3.13
 
 # Install dependencies (curl, gnupg, tailscale, postgres client)
-RUN sudo apt-get update && sudo apt-get install -y \
+RUN apt-get update && sudo apt-get install -y \
     curl \
     gnupg \
     lsb-release \
@@ -28,3 +28,5 @@ RUN pip install --upgrade pip && pip install \
     xgboost \
     lightgbm
 
+# Force TCP on Tailscale
+ENV TS_DEBUG_ENABLE_TCP_ONLY=true
