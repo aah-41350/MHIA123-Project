@@ -21,6 +21,7 @@ RUN pip install --upgrade pip && pip install \
     sqlalchemy \
     pandas \
     numpy \
+    tableone \
     scikit-learn \
     xgboost \
     matplotlib \
