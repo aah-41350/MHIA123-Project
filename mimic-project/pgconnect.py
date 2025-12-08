@@ -1,10 +1,15 @@
 import psycopg2
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 try:
     psycopg2.connect(
-        host="dxp4800.kudu-altair.ts.net",
-        dbname="mimiciv",
-        user="postgres",
-        password="PSQLpwd4!",
+        host=f"{os.getenv('PGHOST')}",
+        dbname=f"{os.getenv('PGDATABASE')}",
+        user=f"{os.getenv('PGUSER')}",
+        password=f"{os.getenv('PGPASSWORD')}",
         connect_timeout=5
     )
     print("Connected!")
