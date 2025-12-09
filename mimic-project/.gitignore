@@ -1,4 +1,4 @@
-.env
-mimicpy/
-__pycache__/
-pgconnect.py
+#.env
+#mimicpy/
+#__pycache__/
+#pgconnect.py
