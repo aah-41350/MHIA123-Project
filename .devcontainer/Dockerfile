@@ -27,5 +27,6 @@ RUN pip install --upgrade pip && pip install \
     matplotlib \
     seaborn \
     jupyterlab \
-    python-dotenv
+    python-dotenv \
+    duckdb
     

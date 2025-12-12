@@ -1,4 +1,5 @@
-#.env
-#mimicpy/
-#__pycache__/
-#pgconnect.py
+.env
+__pycache__/
+docker-ts.kudu-altair.ts.net.crt
+docker-ts.kudu-altair.ts.net.key
+pgconnect.py
