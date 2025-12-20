@@ -28,5 +28,6 @@ RUN pip install --upgrade pip && pip install \
     seaborn \
     jupyterlab \
     python-dotenv \
-    duckdb
+    duckdb \
+    tensorflow
     
