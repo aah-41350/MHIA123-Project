@@ -19,14 +19,14 @@ def load_sql(filename):
 ### DUCKDB FUNCTIONS ###
 con = duckdb.connect()
 
-def attach_duckdb():
+def attach_duckdb(dbname="remote_mimic", dbtype="POSTGRES"):
     try:
         con.sql(f"""
                 INSTALL postgres;
                 LOAD postgres;
                 ATTACH 'dbname={os.getenv("PGDATABASE")} user={os.getenv("PGUSER")}\
                     password={os.getenv("PGPASSWORD")} host={os.getenv("PGHOST")}\
-                        port={os.getenv("PGPORT")}' AS remote_mimic (TYPE POSTGRES);
+                        port={os.getenv("PGPORT")}' AS {dbname} (TYPE {dbtype});
         """)
         print("DuckDB attached to remote PostgreSQL successfully.")
 
