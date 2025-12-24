@@ -2,4 +2,6 @@
 __pycache__/
 docker-ts.kudu-altair.ts.net.crt
 docker-ts.kudu-altair.ts.net.key
-pgconnect.py
+data/*.csv
+models/*.pth
+models/*.pkl

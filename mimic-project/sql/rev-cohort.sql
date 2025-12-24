@@ -4,11 +4,10 @@ WITH cohort AS (
         adm.subject_id,
         adm.hadm_id,
         icu.stay_id,
+        icu.intime AS icu_intime,
         pat.anchor_age,
         pat.gender,
         adm.hospital_expire_flag AS label,
-        icu.stay_id,
-        icu.intime AS icu_intime
     FROM remote_mimic.mimiciv_hosp.admissions adm
     JOIN remote_mimic.mimiciv_hosp.patients pat ON adm.subject_id = pat.subject_id
     JOIN remote_mimic.mimiciv_icu.icustays icu ON adm.hadm_id = icu.hadm_id
@@ -38,7 +37,7 @@ preop_vitals AS (
         AVG(v.spo2) as spo2_mean
     FROM cohort c
     JOIN remote_mimic.mimiciv_derived.vitalsign v ON c.stay_id = v.stay_id
-    WHERE v.charttime BETWEEN (c.icu_intime - INTERVAL '1 week') AND c.icu_intime
+    WHERE v.charttime BETWEEN (c.icu_intime - INTERVAL '2 month') AND c.icu_intime
     GROUP BY c.stay_id
 ),
 -- Extract Preoperative Labs (Last value before ICU admission)
@@ -63,18 +62,14 @@ euroscore_components AS (
     -- We pull pre-calculated derived tables for these inputs
     SELECT 
         c.hadm_id,
-        bg.po2,
-        bg.fio2,
-        (bg.po2 / (bg.fio2/100)) as pf_ratio,
         enz.ck_mb as ck_mb,
         -- Binary flags for EuroSCORE risk factors (derived from ICD)
         MAX(CASE WHEN di.icd_code LIKE 'I252' THEN 1 ELSE 0 END) as prev_mi,
         MAX(CASE WHEN di.icd_code LIKE 'I63%' THEN 1 ELSE 0 END) as stroke_history
     FROM cohort c
-    LEFT JOIN remote_mimic.mimiciv_derived.bg bg ON c.hadm_id = bg.hadm_id
     LEFT JOIN remote_mimic.mimiciv_derived.cardiac_marker enz ON c.hadm_id = enz.hadm_id
     LEFT JOIN remote_mimic.mimiciv_hosp.diagnoses_icd di ON c.hadm_id = di.hadm_id
-    GROUP BY c.hadm_id, bg.po2, bg.fio2, enz.ck_mb
+    GROUP BY c.hadm_id, enz.ck_mb
 )
 
 -- Final Feature Set
@@ -83,7 +78,7 @@ SELECT
     com.charlson_comorbidity_index,
     v.heart_rate_mean, v.sbp_mean, v.dbp_mean, v.mbp_mean, v.resp_rate_mean, v.spo2_mean,
     l.hematocrit, l.hemoglobin, l.wbc, l.platelet, l.creatinine, l.bun,
-    e.pf_ratio, e.ck_mb, e.prev_mi, e.stroke_history
+    e.ck_mb, e.prev_mi, e.stroke_history
 FROM cohort c
 LEFT JOIN comorbidities com ON c.hadm_id = com.hadm_id
 LEFT JOIN preop_vitals v ON c.stay_id = v.stay_id

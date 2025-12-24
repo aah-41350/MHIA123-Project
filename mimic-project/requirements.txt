@@ -1,0 +1,17 @@
+# Database & Data Handling
+duckdb
+pandas
+numpy
+
+# Machine Learning & Deep Learning
+torch
+scikit-learn
+joblib
+
+# Interpretability & Visualization
+shap
+matplotlib
+seaborn
+
+# Remote Database Connection
+psycopg2-binary
