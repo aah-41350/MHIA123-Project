@@ -22,24 +22,42 @@ WITH cohort AS (
 ),
 comorbidities AS (
     -- Charlson Comorbidity Index from derived schema
-    SELECT hadm_id, charlson_comorbidity_index 
+    SELECT 
+        hadm_id,
+        charlson_comorbidity_index,
+        myocardial_infarct,
+        congestive_heart_failure,
+        peripheral_vascular_disease,
+        cerebrovascular_disease,
+        dementia,
+        chronic_pulmonary_disease,
+        rheumatic_disease,
+        peptic_ulcer_disease,
+        mild_liver_disease,
+        diabetes_without_cc,
+        diabetes_with_cc,
+        paraplegia,
+        renal_disease,
+        malignant_cancer,
+        severe_liver_disease,
+        metastatic_solid_tumor
     FROM remote_mimic.mimiciv_derived.charlson
 ),
-preop_vitals AS (
+--preop_vitals AS (
     -- Get mean vitals in the 24h window before ICU admission
-    SELECT 
-        c.stay_id,
-        AVG(v.heart_rate) as heart_rate_mean,
-        AVG(v.sbp) as sbp_mean,
-        AVG(v.dbp) as dbp_mean,
-        AVG(v.mbp) as mbp_mean,
-        AVG(v.resp_rate) as resp_rate_mean,
-        AVG(v.spo2) as spo2_mean
-    FROM cohort c
-    JOIN remote_mimic.mimiciv_derived.vitalsign v ON c.stay_id = v.stay_id
-    WHERE v.charttime BETWEEN (c.icu_intime - INTERVAL '2 month') AND c.icu_intime
-    GROUP BY c.stay_id
-),
+--    SELECT 
+--        c.stay_id,
+--        AVG(v.heart_rate) as heart_rate_mean,
+--        AVG(v.sbp) as sbp_mean,
+--        AVG(v.dbp) as dbp_mean,
+--        AVG(v.mbp) as mbp_mean,
+--        AVG(v.resp_rate) as resp_rate_mean,
+--        AVG(v.spo2) as spo2_mean
+--    FROM cohort c
+--    JOIN remote_mimic.mimiciv_derived.vitalsign v ON c.stay_id = v.stay_id
+--    WHERE v.charttime BETWEEN (c.icu_intime - INTERVAL '2 month') AND c.icu_intime
+--    GROUP BY c.stay_id
+--),
 -- Extract Preoperative Labs (Last value before ICU admission)
 preop_labs AS (
     SELECT 
@@ -63,6 +81,8 @@ euroscore_components AS (
     SELECT 
         c.hadm_id,
         enz.ck_mb as ck_mb,
+        MAX(enz.troponin_t) as trop_t,
+        MAX(enz.ntprobnp) as probnp,
         -- Binary flags for EuroSCORE risk factors (derived from ICD)
         MAX(CASE WHEN di.icd_code LIKE 'I252' THEN 1 ELSE 0 END) as prev_mi,
         MAX(CASE WHEN di.icd_code LIKE 'I63%' THEN 1 ELSE 0 END) as stroke_history
@@ -74,13 +94,19 @@ euroscore_components AS (
 
 -- Final Feature Set
 SELECT 
-    c.*,
-    com.charlson_comorbidity_index,
-    v.heart_rate_mean, v.sbp_mean, v.dbp_mean, v.mbp_mean, v.resp_rate_mean, v.spo2_mean,
+    c.subject_id, c.anchor_age, c.gender, c.label,
+    com.charlson_comorbidity_index, 
+    com.myocardial_infarct, com.congestive_heart_failure,
+    com.peripheral_vascular_disease, com.cerebrovascular_disease, com.dementia,
+    com.chronic_pulmonary_disease, com.rheumatic_disease, com.peptic_ulcer_disease,
+    com.mild_liver_disease, com.diabetes_without_cc, com.diabetes_with_cc,
+    com.paraplegia, com.renal_disease, com.malignant_cancer,
+    com.severe_liver_disease, com.metastatic_solid_tumor,
+    --v.heart_rate_mean, v.sbp_mean, v.dbp_mean, v.mbp_mean, v.resp_rate_mean, v.spo2_mean,
     l.hematocrit, l.hemoglobin, l.wbc, l.platelet, l.creatinine, l.bun,
-    e.ck_mb, e.prev_mi, e.stroke_history
+    e.ck_mb, e.trop_t, e.probnp, e.prev_mi, e.stroke_history
 FROM cohort c
 LEFT JOIN comorbidities com ON c.hadm_id = com.hadm_id
-LEFT JOIN preop_vitals v ON c.stay_id = v.stay_id
+--LEFT JOIN preop_vitals v ON c.stay_id = v.stay_id
 LEFT JOIN preop_labs l ON c.hadm_id = l.hadm_id
 LEFT JOIN euroscore_components e ON c.hadm_id = e.hadm_id

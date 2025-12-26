@@ -5,15 +5,14 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.impute import SimpleImputer
-from src.model_defs import MortalityPredictor
-from src.interpret import generate_shap_plots
 from src.db import attach_duckdb, duckdb_to_df, load_sql
+from src.interpret import generate_shap_plots
+from src.model_defs import train_and_calibrate
 
 def run_pipeline():
     # 1. DATA ACQUISITION & PREPROCESSING
     attach_duckdb("remote_mimic")
-    query = load_sql("rev-cohort.sql")
-    df = duckdb_to_df(query)
+    df = duckdb_to_df(load_sql("rev-cohort.sql"))
     print(f"Initial Data Shape: {df.shape}")
 
     # --- Step A: Define Feature Groups ---
@@ -53,49 +52,21 @@ def run_pipeline():
     X_val = scaler.transform(X_val)
     X_test = scaler.transform(X_test)
     
-    # ==========================================
-    # 3. Addressing Class Imbalance
-    # ==========================================
-    # Calculate positive weight for BCEWithLogitsLoss
-    # Formula: number_of_negatives / number_of_positives
-    num_neg = (y_train == 0).sum()
-    num_pos = (y_train == 1).sum()
-    pos_weight_value = num_neg / num_pos
 
-    print("-" * 30)
-    print(f"Train Shape: {X_train.shape}")
-    print(f"Class Balance (Train): {num_neg} Survivors vs {num_pos} Deaths")
-    print(f"Calculated pos_weight: {pos_weight_value:.4f}")
-    print("-" * 30)
-
-    # ==========================================
-    # 4. Prepare for PyTorch
-    # ==========================================
-    # Convert to Tensors
-    X_train_tensor = torch.FloatTensor(X_train)
-    y_train_tensor = torch.FloatTensor(y_train).unsqueeze(1)
-    pos_weight_tensor = torch.FloatTensor([pos_weight_value])
-
-    print("Ready for Model Training.")
+    # 2. TRAINING & CALIBRATION
+    model, iso_reg = train_and_calibrate(X_train, y_train, X_val, y_val, feature_cols)
     
-    # 2. MODEL INITIALIZATION
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = MortalityPredictor(input_dim=len(feature_cols)).to(device)
     
-    # 3. TRAINING & CALIBRATION
-    # ... (Train your model and run IsotonicRegression) ...
-    
-    # 4. SAVE ARTIFACTS
+    # 3. SAVE ARTIFACTS
     print("Saving artifacts...")
     torch.save(model.state_dict(), 'models/mortality_model.pth')
     joblib.dump(scaler, 'models/scaler.pkl')
     joblib.dump(iso_reg, 'models/calibrator.pkl')
     
-    # 5. INTERPRETABILITY
+    # 4. INTERPRETABILITY
     print("Generating SHAP explanations...")
-    generate_shap_plots(model, X_train, X_test, feature_cols, device)
+    generate_shap_plots(model, X_train, X_test, feature_cols)
     
-    print("Pipeline Complete! Check the 'models/' folder for results.")
 
 if __name__ == "__main__":
     run_pipeline()

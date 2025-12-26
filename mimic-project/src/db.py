@@ -7,7 +7,9 @@ import psycopg2
 
 load_dotenv()
 
-### SQL LOAD FUNCTION ###
+###########################################################################
+                        ### SQL LOAD FUNCTION ###
+###########################################################################
 def load_sql(filename):
     #base_path = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(".", "sql", filename)
@@ -18,7 +20,9 @@ def load_sql(filename):
     except FileNotFoundError:
         return f"Error: The file {filename} was not found at {file_path}"
 
-### DUCKDB FUNCTIONS ###
+###########################################################################
+                        ### DUCKDB FUNCTIONS ###
+###########################################################################
 con = duckdb.connect()
 
 def attach_duckdb(dbname="remote_mimic", dbtype="POSTGRES"):
@@ -29,7 +33,7 @@ def attach_duckdb(dbname="remote_mimic", dbtype="POSTGRES"):
                 ATTACH 'dbname={os.getenv("PGDATABASE")} user={os.getenv("PGUSER")}\
                     password={os.getenv("PGPASSWORD")} host={os.getenv("PGHOST")}\
                         port={os.getenv("PGPORT")}' AS {dbname} (TYPE {dbtype});
-        """)
+                """)
         print("DuckDB attached to remote PostgreSQL successfully.")
 
     except Exception as e:
@@ -39,7 +43,9 @@ def duckdb_to_df(query):
     result = con.execute(query).df()
     return result
 
-### POSTGRESQL FUNCTIONS ###
+###########################################################################
+                        ### POSTGRESQL FUNCTIONS ###
+###########################################################################
 def psql():
     try:
         psycopg2.connect(
