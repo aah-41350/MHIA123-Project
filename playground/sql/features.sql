@@ -42,16 +42,16 @@ labs AS (
 SELECT 
     c.hadm_id,
     -- BASELINE AGGREGATES (First 24h)
-    AVG(CASE WHEN v.charttime <= c.admittime + INTERVAL '24' HOUR THEN v.heart_rate END) as hr_base,
-    AVG(CASE WHEN v.charttime <= c.admittime + INTERVAL '24' HOUR THEN v.mean_bp END) as map_base,
-    AVG(CASE WHEN l.charttime <= c.admittime + INTERVAL '24' HOUR THEN l.creatinine END) as crea_base,
-    AVG(CASE WHEN l.charttime <= c.admittime + INTERVAL '24' HOUR THEN l.lactate END) as lac_base,
+    AVG(CASE WHEN v.charttime <= c.admittime + INTERVAL 24 HOURS THEN v.heart_rate END) as hr_base,
+    AVG(CASE WHEN v.charttime <= c.admittime + INTERVAL 24 HOURS THEN v.mean_bp END) as map_base,
+    AVG(CASE WHEN l.charttime <= c.admittime + INTERVAL 24 HOURS THEN l.creatinine END) as creat_base,
+    AVG(CASE WHEN l.charttime <= c.admittime + INTERVAL 24 HOURS THEN l.lactate END) as lac_base,
 
     -- TERMINAL AGGREGATES (Last 24h)
-    AVG(CASE WHEN v.charttime >= c.end_time - INTERVAL '24' HOUR THEN v.heart_rate END) as hr_end,
-    AVG(CASE WHEN v.charttime >= c.end_time - INTERVAL '24' HOUR THEN v.mean_bp END) as map_end,
-    AVG(CASE WHEN l.charttime >= c.end_time - INTERVAL '24' HOUR THEN l.creatinine END) as crea_end,
-    AVG(CASE WHEN l.charttime >= c.end_time - INTERVAL '24' HOUR THEN l.lactate END) as lac_end
+    AVG(CASE WHEN v.charttime >= c.end_time - INTERVAL 24 HOURS THEN v.heart_rate END) as hr_end,
+    AVG(CASE WHEN v.charttime >= c.end_time - INTERVAL 24 HOURS THEN v.mean_bp END) as map_end,
+    AVG(CASE WHEN l.charttime >= c.end_time - INTERVAL 24 HOURS THEN l.creatinine END) as crea_end,
+    AVG(CASE WHEN l.charttime >= c.end_time - INTERVAL 24 HOURS THEN l.lactate END) as lac_end
 
 FROM cohort c
 LEFT JOIN vitals v ON c.hadm_id = v.hadm_id
